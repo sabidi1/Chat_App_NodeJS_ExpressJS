@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
+<script src = "/socket.io/socket.io.js"></script>
 <!----  A container element creates a fixed width container that centers our content inside ---->
 <div class = "container">
     <br>
@@ -12,7 +11,9 @@
     <div class = "jumbotron">   
         <h1 class = "display-4">Send Message</h1>
         <br>
-        <input class = "form-control" placeholder= "Name">
+        <input id = "name" class = "form-control" placeholder= "Name">
+        <br>
+        <textarea id = "message" class = "form-control" placeholder= "Message"></textarea>
         <br>
         <!--So we can get sucess styling on button-->
         <button id = "send" class = "btn btn-success ">Send</button>
@@ -24,12 +25,17 @@
 </div>
 
 <script>
+    var socket = io()   // connection to the Socket.IO server
     $(() => {
         $("#send").click(()=>   {
-            addMessages({name: 'Tim', message : 'hello'})
-        });
+            var message = {name: $("#name").val(), message: $("#message").val()}
+            postMessage(message)
+        })
         getMessages();
     });
+
+    //event listener to add new message
+    socket.on('message',addMessages);
 
     function addMessages(message){
         $("#messages").append(`<h4> ${message.name} </h4> <p>${message.message} </p>`)
@@ -37,9 +43,12 @@
     //jQuery http GET request
     function getMessages(){
         $.get('http://localhost:3000/messages', (data) =>{
-            console.log(data);
             data.forEach(addMessages);
         })
+    }
+
+    function postMessage(message){
+        $.post('http://localhost:3000/messages', message)
     }
 
 </script>
