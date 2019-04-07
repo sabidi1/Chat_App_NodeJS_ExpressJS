@@ -20,10 +20,9 @@
     </div>
     <!--way we can access it by ID with jQuery-->
     <div id ="messages">
-
+    
     </div>
 </div>
-
 <script>
     var socket = io()   // connection to the Socket.IO server
     $(() => {
@@ -31,9 +30,8 @@
             var message = {name: $("#name").val(), message: $("#message").val()}
             postMessage(message)
         })
-        getMessages();
-    });
-
+        getMessages()
+    })
     //event listener to add new message
     socket.on('message',addMessages);
 
@@ -46,9 +44,7 @@
             data.forEach(addMessages);
         })
     }
-
     function postMessage(message){
         $.post('http://localhost:3000/messages', message)
     }
-
 </script>
